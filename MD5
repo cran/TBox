@@ -1,0 +1,13 @@
+364ed359155ede49a6f85b15f7a1e813 *DESCRIPTION
+695b824d5e9c1609a0bf183d4b38dfcc *LICENSE
+e42190fbac2c1b0fd61beb2cf468994b *NAMESPACE
+ac8666c145e9392d044bb4a445bf0568 *R/TBox-package.R
+e92d5c391a79966048acd1dbb9331ce6 *R/format_code.R
+109f94eb8c836457d1a637d7d3df1223 *README.md
+016bcf67f409675ff98373081ba753dd *inst/extdata/FiraCode/FiraCode-Bold.ttf
+456f8f2a9dc64ad81c6fb84908aeb751 *inst/extdata/FiraCode/FiraCode-Light.ttf
+1663a5207e331ab6fa967200663e4e10 *inst/extdata/FiraCode/FiraCode-Medium.ttf
+301dd380625eb548238ae3c39ec9f12b *inst/extdata/FiraCode/FiraCode-Regular.ttf
+851ef86c3ff275bd077193188f3a004f *inst/extdata/FiraCode/FiraCode-SemiBold.ttf
+247af67a3b2d61ef8cda19ff6e88f589 *man/TBox-package.Rd
+4f9de7c1fe0f00a1eff62c0d78843946 *man/render_code.Rd
