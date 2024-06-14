@@ -8,6 +8,15 @@
 \description{
 Tools to help developers and producers manipulate R objects and outputs. It includes tools for displaying results and objects, and for formatting them in the correct format.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/TanguyBarthelemy/TBox}
+  \item \url{https://tanguybarthelemy.github.io/TBox/}
+  \item Report bugs at \url{https://github.com/TanguyBarthelemy/TBox/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Tanguy Barthelemy \email{tanguy.barthelemy@insee.fr}
 

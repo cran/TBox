@@ -1,69 +1,50 @@
 
-#' @title Generate a file with formatted code
-#' @description
-#' Format a piece of code to copy it into an email, a pdf, a document, etc.
-#'
-#' @param output a string. The output format ("pdf", "html" or "word" are
-#' accepted)
-#' @param browser a string. The path to the browser which will open the
-#' generated file format
-#' @param eval a boolean specifying if the code has to be evaluated
-#' @param font_size a numeric. The font size in pdf format.
-#' @param code a boolean. Does the copied content is
-#'
-#' @details
-#' This function allows the user to generate formatted code (for email,
-#' document, copy, message, etc.) on the fly.
-#'
-#' It accepts mainly word, pdf and html formats, but any format accepted by
-#' rmarkdown on the computer.
-#'
-#' To use this function, simply copy a piece of code and run
-#' \code{render_code()} with the arguments that interest us.
-#' If you want content that is not R code, use the \code{code} argument to
-#' \code{FALSE}.
-#' If you want the R code to be evaluated (and the result displayed), you can
-#' use the argument \code{eval} to \code{TRUE}.
-#' In pdf format, you can change the font size using the \code{font_size}
-#' argument.
-#' Finally, you can change the browser that opens the file by default with the
-#' \code{browser} argument.
-#'
-#' @returns This function returns invisibly (with \code{invisible()})
-#' \code{NULL}.
-#'
-#' @export
-#' @examples
-#' # Copy a snippet of code
-#' if (clipr::clipr_available()) {
-#'     clipr::write_clip("plot(AirPassengers)", allow_non_interactive = TRUE)
-#' }
-#'
-#' render_code(
-#'     output = "word"
-#' )
-#'
-#' render_code(
-#'     output = "html",
-#'     eval = FALSE
-#' )
-#'
-#' \donttest{
-#' render_code(
-#'     output = "pdf",
-#'     eval = TRUE,
-#'     font_size = 16
-#' )
-#' }
-render_code <- function(output = "word",
-                        browser = getOption("browser"),
-                        eval = FALSE,
-                        font_size = 12,
-                        code = TRUE) {
+get_fira_path <- function() {
+    return(system.file("extdata", "FiraCode", package = "TBox"))
+}
 
-    if (!clipr::clipr_available()) {
-        return(clipr::dr_clipr())
-    }
+generate_chunk_header <- function(...) {
+    yaml_begining <- "```{r"
+    yaml_ending <- "}"
+
+    additional_args <- vapply(
+        X = list(...),
+        FUN = deparse,
+        FUN.VALUE = character(1L)
+    )
+
+    # Check additionnal argument as knitr options
+    checkmate::assert_character(
+        x = names(additional_args),
+        unique = TRUE, null.ok = TRUE
+    )
+    vapply(
+        X = names(additional_args),
+        FUN =  checkmate::assert_choice,
+        choices = names(knitr::opts_chunk$get()),
+        FUN.VALUE = character(1)
+    )
+
+    yaml_inter <- ifelse(
+        test = length(additional_args) > 0L,
+        yes = paste(",", names(additional_args),
+                    "=", additional_args, collapse = ""),
+        no = ""
+    )
+
+    return(paste0(
+        yaml_begining,
+        yaml_inter,
+        yaml_ending
+    ))
+}
+
+generate_rmd_file <- function(content,
+                              output = "word",
+                              font_size = 12,
+                              code = TRUE,
+                              fira_path = get_fira_path(),
+                              ...) {
 
     has_xelatex <- nchar(Sys.which("xelatex")) > 0
 
@@ -94,27 +75,116 @@ render_code <- function(output = "word",
         test = (output == "pdf" && has_xelatex),
         yes = paste0(
             "\\setmonofont[ExternalLocation=",
-            system.file("extdata", "FiraCode", package = "TBox"),
+            fira_path,
             "/]{FiraCode-Regular.ttf}\n"
         ),
         no = ""
     )
 
+    rmd_body <- paste0(
+        c(
+            "\n## Running Code\n",
+            ifelse(
+                test = code,
+                yes = generate_chunk_header(...),
+                no = ""
+            ),
+            content,
+            ifelse(
+                test = code,
+                yes = "```",
+                no = ""
+            )
+        ),
+        collapse = "\n"
+    )
+
+    return(paste0(rmd_header, rmd_font_size, rmd_monofont, rmd_body, "\n"))
+}
+
+#' @title Generate a file with formatted code
+#' @description
+#' Format a piece of code to copy it into an email, a pdf, a document, etc.
+#'
+#' @param output a string. The output format ("pdf", "html" or "word" are
+#' accepted)
+#' @param browser a string. The path to the browser which will open the
+#' generated file format
+#' @param font_size a numeric. The font size in pdf format.
+#' @param code a boolean. Does the copied content is
+#' @param ... other arguments passed to R chunk (for example eval = TRUE,
+#' echo = FALSE...)
+#'
+#' @details
+#' This function allows the user to generate formatted code (for email,
+#' document, copy, message, etc.) on the fly.
+#'
+#' It accepts mainly word, pdf and html formats, but any format accepted by
+#' rmarkdown on the computer.
+#'
+#' To use this function, simply copy a piece of code and run
+#' \code{render_code()} with the arguments that interest us.
+#' If you want content that is not R code, use the \code{code} argument to
+#' \code{FALSE}.
+#' In pdf format, you can change the font size using the \code{font_size}
+#' argument.
+#' Also, you can change the browser that opens the file by default with the
+#' \code{browser} argument.
+#' With the argument \dots, you can specify knitr arguments to be included in
+#' the chunk. For example, you can add \code{eval = TRUE} (if you want the R
+#' code to be evaluated (and the result displayed)), \code{echo = FALSE} (if
+#' you don't want to display the code)... More information in the function
+#' \code{\link[knitr]{opts_chunk}} or directly
+#' \url{https://yihui.org/knitr/options/#chunk-options} to see all available
+#' options and their descriptions.
+#'
+#' @returns This function returns invisibly (with \code{invisible()})
+#' \code{NULL}.
+#'
+#' @export
+#' @examples
+#' # Copy a snippet of code
+#' if (clipr::clipr_available()) {
+#'     clipr::write_clip("plot(AirPassengers)", allow_non_interactive = TRUE)
+#' }
+#'
+#' render_code(
+#'     output = "word",
+#'     echo = TRUE
+#' )
+#'
+#' render_code(
+#'     output = "html",
+#'     eval = FALSE
+#' )
+#'
+#' \donttest{
+#' render_code(
+#'     output = "pdf",
+#'     eval = TRUE,
+#'     font_size = 16
+#' )
+#' }
+render_code <- function(output = "word",
+                        browser = getOption("browser"),
+                        font_size = 12,
+                        code = TRUE,
+                        ...) {
+
+    if (!clipr::clipr_available()) {
+        return(clipr::dr_clipr())
+    }
+
     content <- clipr::read_clip(allow_non_interactive = TRUE) |>
         paste(collapse = "\n")
 
-    rmd_body <- paste0(
-        "\n## Running Code\n\n",
-        ifelse(
-            test = code,
-            yes = paste0("```{r, echo = TRUE, eval = ", eval, "}"),
-            no = ""
-        ), "\n",
-        content, "\n",
-        ifelse(code, "```", ""), "\n"
+    rmd_content <- generate_rmd_file(
+        content = content,
+        output = output,
+        font_size = font_size,
+        code = code,
+        ...
     )
-
-    rmd_content <- paste0(rmd_header, rmd_font_size, rmd_monofont, rmd_body)
 
     ext <- switch(
         output,

@@ -7,9 +7,9 @@
 render_code(
   output = "word",
   browser = getOption("browser"),
-  eval = FALSE,
   font_size = 12,
-  code = TRUE
+  code = TRUE,
+  ...
 )
 }
 \arguments{
@@ -19,11 +19,12 @@ accepted)}
 \item{browser}{a string. The path to the browser which will open the
 generated file format}
 
-\item{eval}{a boolean specifying if the code has to be evaluated}
-
 \item{font_size}{a numeric. The font size in pdf format.}
 
 \item{code}{a boolean. Does the copied content is}
+
+\item{...}{other arguments passed to R chunk (for example eval = TRUE,
+echo = FALSE...)}
 }
 \value{
 This function returns invisibly (with \code{invisible()})
@@ -43,12 +44,17 @@ To use this function, simply copy a piece of code and run
 \code{render_code()} with the arguments that interest us.
 If you want content that is not R code, use the \code{code} argument to
 \code{FALSE}.
-If you want the R code to be evaluated (and the result displayed), you can
-use the argument \code{eval} to \code{TRUE}.
 In pdf format, you can change the font size using the \code{font_size}
 argument.
-Finally, you can change the browser that opens the file by default with the
+Also, you can change the browser that opens the file by default with the
 \code{browser} argument.
+With the argument \dots, you can specify knitr arguments to be included in
+the chunk. For example, you can add \code{eval = TRUE} (if you want the R
+code to be evaluated (and the result displayed)), \code{echo = FALSE} (if
+you don't want to display the code)... More information in the function
+\code{\link[knitr]{opts_chunk}} or directly
+\url{https://yihui.org/knitr/options/#chunk-options} to see all available
+options and their descriptions.
 }
 \examples{
 # Copy a snippet of code
@@ -57,7 +63,8 @@ if (clipr::clipr_available()) {
 }
 
 render_code(
-    output = "word"
+    output = "word",
+    echo = TRUE
 )
 
 render_code(
