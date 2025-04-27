@@ -5,30 +5,53 @@
 \title{Generate a file with formatted code}
 \usage{
 render_code(
-  output = "word",
+  output_format = c("word", "pdf", "html", "word_document", "pdf_document",
+    "html_document"),
   browser = getOption("browser"),
   font_size = 12,
   code = TRUE,
+  open = TRUE,
+  monofont_path = get_fira_path(),
+  word_template_path = get_word_template_path(),
   ...
 )
 }
 \arguments{
-\item{output}{a string. The output format ("pdf", "html" or "word" are
-accepted)}
+\item{output_format}{a string representing the output format. The values
+"pdf", "html" or "word" and their knitr equivalent "pdf_document",
+"html_document" or "word_document" are accepted.}
 
 \item{browser}{a string. The path to the browser which will open the
 generated file format}
 
-\item{font_size}{a numeric. The font size in pdf format.}
+\item{font_size}{a numeric. The font size, only available in pdf format.}
 
-\item{code}{a boolean. Does the copied content is}
+\item{code}{a boolean. Should the copied content have to be inserted in R
+chunk or is it just text? Default is TRUE (so the copied content will be
+inserted in R chunk).}
+
+\item{open}{a boolean. Default is TRUE meaning that the document will open
+automatically after being generated.}
+
+\item{monofont_path}{a string. The path to the font used to render code
+chunks. It should link to a \code{.ttf} file. Only available in pdf format.}
+
+\item{word_template_path}{a string. The path to the word template file used
+when rendering with word. By default, the template used is the one included
+in the package. Only used with word output.}
 
 \item{...}{other arguments passed to R chunk (for example eval = TRUE,
 echo = FALSE...)}
 }
 \value{
-This function returns invisibly (with \code{invisible()})
-\code{NULL}.
+This function returns invisibly (with \code{invisible()}) a vector
+of length two with two element:
+
+\itemize{
+\item the path of the created rmarkdown (template) document (\code{.Rmd});
+\item the path of the created output (in the format \code{.pdf},
+\code{.docx} or \code{.html}).
+}
 }
 \description{
 Format a piece of code to copy it into an email, a pdf, a document, etc.
@@ -48,13 +71,18 @@ In pdf format, you can change the font size using the \code{font_size}
 argument.
 Also, you can change the browser that opens the file by default with the
 \code{browser} argument.
+
 With the argument \dots, you can specify knitr arguments to be included in
 the chunk. For example, you can add \code{eval = TRUE} (if you want the R
 code to be evaluated (and the result displayed)), \code{echo = FALSE} (if
-you don't want to display the code)... More information in the function
-\code{\link[knitr]{opts_chunk}} or directly
+you don't want to display the code)...
+
+More information in the function \code{\link[knitr]{opts_chunk}} or directly
 \url{https://yihui.org/knitr/options/#chunk-options} to see all available
 options and their descriptions.
+
+If the \code{open} argument is set to \code{FALSE} then the \code{browser}
+argument will be ignored.
 }
 \examples{
 # Copy a snippet of code
@@ -63,12 +91,12 @@ if (clipr::clipr_available()) {
 }
 
 render_code(
-    output = "word",
+    output_format = "word",
     echo = TRUE
 )
 
 render_code(
-    output = "html",
+    output_format = "html",
     eval = FALSE
 )
 

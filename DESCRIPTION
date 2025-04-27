@@ -1,23 +1,24 @@
 Package: TBox
 Title: Useful Functions for Programming and Generating Documents
-Version: 0.1.2
+Version: 0.2.2
 Authors@R: 
-    person(given = "Tanguy", 
-           family = "Barthelemy", role = c("aut","cre"),
-           email ="tanguy.barthelemy@insee.fr")
-Description: Tools to help developers and producers manipulate R objects and outputs. It includes tools for displaying results and objects, and for formatting them in the correct format.
+    person("Tanguy", "Barthelemy", , "tanguy.barthelemy@insee.fr", role = c("aut", "cre"))
+Description: Tools to help developers and producers manipulate R objects
+    and outputs. It includes tools for displaying results and objects, and
+    for formatting them in the correct format.
 License: MIT + file LICENSE
-Encoding: UTF-8
-RoxygenNote: 7.3.1
-Imports: checkmate, clipr, knitr, rmarkdown, utils
 URL: https://github.com/TanguyBarthelemy/TBox,
         https://tanguybarthelemy.github.io/TBox/
 BugReports: https://github.com/TanguyBarthelemy/TBox/issues
-Suggests: testthat (>= 3.0.0)
+Depends: R (>= 3.6)
+Imports: checkmate, clipr, knitr, rmarkdown, utils
+Suggests: htm2txt, pdftools, testthat (>= 3.0.0), withr
 Config/testthat/edition: 3
+Encoding: UTF-8
+RoxygenNote: 7.3.2
 NeedsCompilation: no
-Packaged: 2024-06-14 20:53:16 UTC; UTZK0M
+Packaged: 2025-04-27 14:37:42 UTC; UTZK0M
 Author: Tanguy Barthelemy [aut, cre]
 Maintainer: Tanguy Barthelemy <tanguy.barthelemy@insee.fr>
 Repository: CRAN
-Date/Publication: 2024-06-14 21:30:02 UTC
+Date/Publication: 2025-04-27 15:00:02 UTC
